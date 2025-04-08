@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Caso;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 
 class CasoController extends Controller
 {
@@ -22,6 +23,19 @@ class CasoController extends Controller
      */
     public function store(Request $request)
     {
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => config('services.recaptcha.secret'),
+            'response' => $request->input('g-recaptcha-response'),
+        ]);
+        
+        $result = $response->json();
+
+        if (!($result['success'] ?? false)) {
+            return response()->json([
+                'message' => 'Captcha inválido. Por favor, inténtalo de nuevo.'
+            ], 422);
+        }
+
         $request->validate([
             'dni' => 'required|numeric',
             'nombre_completo' => 'required|string',
