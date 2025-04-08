@@ -137,6 +137,12 @@ class CasoController extends Controller
 
         $data = $request->only(array_keys($validacion));
 
+        if ($request->estado_id == 4) {
+            $data['fecha_resolucion'] = Carbon::now();
+        } else {
+            $data['fecha_resolucion'] = null;
+        }
+
         if ($request->has('fecha_resolucion') && $request->fecha_resolucion) {
             $data['fecha_resolucion'] = Carbon::parse($request->fecha_resolucion);
         }
@@ -144,7 +150,7 @@ class CasoController extends Controller
         $caso->update($data);
 
         $caso->refresh();
-        
+
         return response()->json([
             'message' => 'Caso actualizado exitosamente',
             'caso' => $caso
