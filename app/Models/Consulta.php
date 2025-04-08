@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Consulta extends Model
+{
+    use HasFactory;
+
+    protected $table = 'consultas';
+
+    protected $fillable = [
+        'nombre_completo',
+        'dni',
+        'telefono',
+        'correo',
+        'direccion',
+        'mensaje',
+        'estado_id',
+    ];
+
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class);
+    }
+}
