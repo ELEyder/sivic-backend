@@ -88,7 +88,7 @@ class CasoController extends Controller
      */
     public function show($id)
     {
-        $caso = Caso::with('estado')->find($id);
+        $caso = Caso::with('estado','tipo_caso')->find($id);
         if (!$caso) {
             return response()->json(['message' => 'Caso no encontrado'], 404);
         }
@@ -100,53 +100,51 @@ class CasoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'dni' => 'required|numeric',
-            'nombre_completo' => 'required|string',
-            'genero' => 'required|string',
-            'telefono' => 'required|numeric',
-            'nacionalidad' => 'required|string',
-            'direccion' => 'required|string',
-            'departamento' => 'required|string',
-            'provincia' => 'required|string',
-            'distrito' => 'required|string',
-            'tipo_caso_id' => 'required|exists:tipos_caso,id',
-            'lugar_caso' => 'required|string',
-            'descripcion' => 'required|string',
-            'autorizacion_comunicacion' => 'required|boolean',
-            'autorizacion_copia_reporte' => 'required|boolean',
-            'fecha_resolucion' => 'nullable|date',
-            'estado_id' => 'required|exists:estados,id',
-            'asignado' => 'nullable|string',
-            'resolucion' => 'nullable|string',
-        ]);
+
 
         $caso = Caso::find($id);
+
         if (!$caso) {
             return response()->json(['message' => 'Caso no encontrado'], 404);
         }
 
-        $caso->update([
-            'dni' => $request->dni,
-            'nombre_completo' => $request->nombre_completo,
-            'genero' => $request->genero,
-            'telefono' => $request->telefono,
-            'nacionalidad' => $request->nacionalidad,
-            'direccion' => $request->direccion,
-            'departamento' => $request->departamento,
-            'provincia' => $request->provincia,
-            'distrito' => $request->distrito,
-            'tipo_caso_id' => $request->tipo_caso_id,
-            'lugar_caso' => $request->lugar_caso,
-            'descripcion' => $request->descripcion,
-            'autorizacion_comunicacion' => $request->autorizacion_comunicacion,
-            'autorizacion_copia_reporte' => $request->autorizacion_copia_reporte,
-            'fecha_resolucion' => $request->fecha_resolucion ? Carbon::parse($request->fecha_resolucion) : null,
-            'estado_id' => $request->estado_id,
-            'asignado' => $request->asignado,
-            'resolucion' => $request->resolucion,
-        ]);
+        $validacion = [
+            'dni' => 'nullable|numeric',
+            'nombre_completo' => 'nullable|string',
+            'genero' => 'nullable|string',
+            'telefono' => 'nullable|numeric',
+            'nacionalidad' => 'nullable|string',
+            'direccion' => 'nullable|string',
+            'departamento' => 'nullable|string',
+            'provincia' => 'nullable|string',
+            'distrito' => 'nullable|string',
+            'tipo_caso_id' => 'nullable|exists:tipos_caso,id',
+            'lugar_caso' => 'nullable|string',
+            'descripcion' => 'nullable|string',
+            'autorizacion_comunicacion' => 'nullable|boolean',
+            'autorizacion_copia_reporte' => 'nullable|boolean',
+            'fecha_resolucion' => 'nullable|date',
+            'estado_id' => 'nullable|exists:estados,id',
+            'asignado' => 'nullable|string',
+            'resolucion' => 'nullable|string',
+        ];
 
+        $requestFields = $request->only(array_keys($validacion));
+        
+        $request->validate(array_filter($validacion, function ($field) use ($requestFields) {
+            return array_key_exists($field, $requestFields);
+        }));
+
+        $data = $request->only(array_keys($validacion));
+
+        if ($request->has('fecha_resolucion') && $request->fecha_resolucion) {
+            $data['fecha_resolucion'] = Carbon::parse($request->fecha_resolucion);
+        }
+
+        $caso->update($data);
+
+        $caso->refresh();
+        
         return response()->json([
             'message' => 'Caso actualizado exitosamente',
             'caso' => $caso

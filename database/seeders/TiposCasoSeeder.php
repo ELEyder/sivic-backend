@@ -6,7 +6,7 @@ use App\Models\TipoCaso;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class TipoCasoSeeder extends Seeder
+class TiposCasoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
