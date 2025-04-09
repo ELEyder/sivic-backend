@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCasoRequest;
+use App\Http\Requests\UpdateCasoRequest;
 use App\Models\Caso;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CasoController extends Controller
 {
@@ -21,7 +25,7 @@ class CasoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreCasoRequest $request)
     {
         $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
             'secret' => config('services.recaptcha.secret'),
@@ -30,31 +34,11 @@ class CasoController extends Controller
         
         $result = $response->json();
 
-        if (!($result['success'] ?? false)) {
+        if (($result['success'] ?? false)) {
             return response()->json([
                 'message' => 'Captcha inválido. Por favor, inténtalo de nuevo.'
             ], 422);
         }
-
-        $request->validate([
-            'dni' => 'required|numeric',
-            'nombre_completo' => 'required|string',
-            'genero' => 'required|string',
-            'telefono' => 'required|numeric',
-            'nacionalidad' => 'required|string',
-            'direccion' => 'required|string',
-            'departamento' => 'required|string',
-            'provincia' => 'required|string',
-            'distrito' => 'required|string',
-            'tipo_caso_id' => 'required|exists:tipos_caso,id',
-            'lugar_caso' => 'required|string',
-            'descripcion' => 'required|string',
-            'autorizacion_comunicacion' => 'required|boolean',
-            'autorizacion_copia_reporte' => 'required|boolean',
-            'estado_id' => 'exists:estados,id',
-            'asignado' => 'nullable|string',
-            'resolucion' => 'nullable|string',
-        ]);
 
         $caso = Caso::create([
             'dni' => $request->dni,
@@ -71,10 +55,10 @@ class CasoController extends Controller
             'descripcion' => $request->descripcion,
             'autorizacion_comunicacion' => $request->autorizacion_comunicacion,
             'autorizacion_copia_reporte' => $request->autorizacion_copia_reporte,
-            'fecha_resolucion' => $request->fecha_resolucion ? Carbon::parse($request->fecha_resolucion) : null,
-            'estado_id' => $request->estado_id ?? 1,
             'asignado' => $request->asignado,
             'resolucion' => $request->resolucion,
+            'fecha_resolucion' => $request->fecha_resolucion ? Carbon::parse($request->fecha_resolucion) : null,
+            'estado_id' => $request->estado_id ?? 1,
         ]);
 
         return response()->json([
@@ -98,62 +82,48 @@ class CasoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCasoRequest $request, $id)
     {
-
-
         $caso = Caso::find($id);
 
         if (!$caso) {
             return response()->json(['message' => 'Caso no encontrado'], 404);
         }
 
-        $validacion = [
-            'dni' => 'nullable|numeric',
-            'nombre_completo' => 'nullable|string',
-            'genero' => 'nullable|string',
-            'telefono' => 'nullable|numeric',
-            'nacionalidad' => 'nullable|string',
-            'direccion' => 'nullable|string',
-            'departamento' => 'nullable|string',
-            'provincia' => 'nullable|string',
-            'distrito' => 'nullable|string',
-            'tipo_caso_id' => 'nullable|exists:tipos_caso,id',
-            'lugar_caso' => 'nullable|string',
-            'descripcion' => 'nullable|string',
-            'autorizacion_comunicacion' => 'nullable|boolean',
-            'autorizacion_copia_reporte' => 'nullable|boolean',
-            'fecha_resolucion' => 'nullable|date',
-            'estado_id' => 'nullable|exists:estados,id',
-            'asignado' => 'nullable|string',
-            'resolucion' => 'nullable|string',
-        ];
+        $data = $request->only(array_keys($request->rules()));
 
-        $requestFields = $request->only(array_keys($validacion));
-        
-        $request->validate(array_filter($validacion, function ($field) use ($requestFields) {
-            return array_key_exists($field, $requestFields);
-        }));
+        if ($request->hasFile('resolucion_archivo')) {
+            $archivo = $request->file('resolucion_archivo');
+            if ($archivo->isValid()) {
+                $ruta = $archivo->store('resoluciones', 'public');
+                $url = Storage::url($ruta);
+                
+                $data['resolucion_url'] = $url;
+            } else {
+                return response()->json(['message' => 'El archivo no es válido.'], 422);
+            }
+        }
 
-        $data = $request->only(array_keys($validacion));
-
+        // Fecha asignada
         if ($request->estado_id == 4) {
             $data['fecha_resolucion'] = Carbon::now();
         } else {
             $data['fecha_resolucion'] = null;
         }
 
+        // Fecha parseada
         if ($request->has('fecha_resolucion') && $request->fecha_resolucion) {
             $data['fecha_resolucion'] = Carbon::parse($request->fecha_resolucion);
         }
 
+        // Caso actualizado
         $caso->update($data);
-
         $caso->refresh();
 
         return response()->json([
             'message' => 'Caso actualizado exitosamente',
-            'caso' => $caso
+            'caso' => $caso,
+            'datos_eviados' => $request
         ]);
     }
 

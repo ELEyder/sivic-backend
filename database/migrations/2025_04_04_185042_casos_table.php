@@ -22,15 +22,16 @@ return new class extends Migration
             $table->string('departamento');
             $table->string('provincia');
             $table->string('distrito');
-            $table->foreignId('tipo_caso_id')->constrained('tipos_caso', 'id')->onDelete('restrict');
             $table->string('lugar_caso');
             $table->text('descripcion');
             $table->boolean('autorizacion_comunicacion');
             $table->boolean('autorizacion_copia_reporte');
             $table->timestamp('fecha_resolucion')->nullable();;
-            $table->foreignId('estado_id')->constrained('estados', 'id')->onDelete('restrict');
             $table->string('asignado')->nullable();
             $table->text('resolucion')->nullable();
+            $table->string('resolucion_url')->nullable();
+            $table->foreignId('tipo_caso_id')->constrained('tipos_caso', 'id')->onDelete('restrict');
+            $table->foreignId('estado_id')->constrained('estados', 'id')->onDelete('restrict');
             $table->timestamps();
         });
     }

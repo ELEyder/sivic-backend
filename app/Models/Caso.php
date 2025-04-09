@@ -21,7 +21,6 @@ class Caso extends Model
         'departamento',
         'provincia',
         'distrito',
-        'tipo_caso_id',
         'lugar_caso',
         'descripcion',
         'autorizacion_comunicacion',
@@ -29,6 +28,8 @@ class Caso extends Model
         'fecha_resolucion',
         'asignado',
         'resolucion',
+        'resolucion_url',
+        'tipo_caso_id',
         'estado_id',
     ];
 

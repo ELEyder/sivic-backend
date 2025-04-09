@@ -15,12 +15,6 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
         });
 
-        DB::table('estados')->insert([
-            ['nombre' => 'Recibido', 'descripcion' => 'El caso ha sido recibido'],
-            ['nombre' => 'Leído', 'descripcion' => 'El caso ha sido leído y esta en proceso de ser resuelto.'],
-            ['nombre' => 'Atendido', 'descripcion' => 'El caso ha sido atendido y está en proceso de resolución.'],
-            ['nombre' => 'Resuelto', 'descripcion' => 'El caso ha sido completamente resuelto.'],
-        ]);
     }
 
     public function down()
