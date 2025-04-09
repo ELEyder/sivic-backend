@@ -26,6 +26,7 @@ class Caso extends Model
         'autorizacion_comunicacion',
         'autorizacion_copia_reporte',
         'fecha_resolucion',
+        'fecha_atencion',
         'asignado',
         'resolucion',
         'resolucion_url',

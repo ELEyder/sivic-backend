@@ -13,7 +13,7 @@ class EstadosSeeder extends Seeder
             ['nombre' => 'Recibido', 'descripcion' => 'El caso ha sido recibido'],
             ['nombre' => 'Leído', 'descripcion' => 'El caso ha sido leído y está en proceso de ser resuelto.'],
             ['nombre' => 'Atendido', 'descripcion' => 'El caso ha sido atendido y está en proceso de resolución.'],
-            ['nombre' => 'Resuelto', 'descripcion' => 'El caso ha sido completamente resuelto.'],
+            ['nombre' => 'Resuelto', 'descripcion' => 'El caso ha sido deribado a OAT.'],
         ]);
     }
 }

@@ -31,10 +31,10 @@ class CasoController extends Controller
             'secret' => config('services.recaptcha.secret'),
             'response' => $request->input('g-recaptcha-response'),
         ]);
-        
+
         $result = $response->json();
 
-        if (($result['success'] ?? false)) {
+        if (!($result['success'] ?? false)) {
             return response()->json([
                 'message' => 'Captcha inválido. Por favor, inténtalo de nuevo.'
             ], 422);
@@ -72,7 +72,7 @@ class CasoController extends Controller
      */
     public function show($id)
     {
-        $caso = Caso::with('estado','tipo_caso')->find($id);
+        $caso = Caso::with('estado', 'tipo_caso')->find($id);
         if (!$caso) {
             return response()->json(['message' => 'Caso no encontrado'], 404);
         }
@@ -97,7 +97,7 @@ class CasoController extends Controller
             if ($archivo->isValid()) {
                 $ruta = $archivo->store('resoluciones', 'public');
                 $url = Storage::url($ruta);
-                
+
                 $data['resolucion_url'] = $url;
             } else {
                 return response()->json(['message' => 'El archivo no es válido.'], 422);
@@ -107,8 +107,12 @@ class CasoController extends Controller
         // Fecha asignada
         if ($request->estado_id == 4) {
             $data['fecha_resolucion'] = Carbon::now();
+            $data['fecha_atencion'] = $caso->fecha_atencion ?? Carbon::now();
+        } else if ($request->estado_id == 3) {
+            $data['fecha_atencion'] = Carbon::now();
         } else {
             $data['fecha_resolucion'] = null;
+            $data['fecha_atencion'] = null;
         }
 
         // Fecha parseada

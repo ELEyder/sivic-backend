@@ -26,6 +26,7 @@ return new class extends Migration
             $table->text('descripcion');
             $table->boolean('autorizacion_comunicacion');
             $table->boolean('autorizacion_copia_reporte');
+            $table->timestamp('fecha_atencion')->nullable();;
             $table->timestamp('fecha_resolucion')->nullable();;
             $table->string('asignado')->nullable();
             $table->text('resolucion')->nullable();
