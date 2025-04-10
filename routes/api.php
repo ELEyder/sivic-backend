@@ -9,9 +9,9 @@ Route::prefix('v1')->group(function () {
   Route::put('casos/{id}', 'CasoController@update');
   Route::delete('casos/{id}', 'CasoController@destroy');
 
-  Route::resource('consultas', 'ConsultaController');
-  Route::put('consultas/{id}', 'ConsultaController@update');
-  Route::delete('consultas/{id}', 'ConsultaController@destroy');
+  Route::resource('contactos', 'ContactoController');
+  Route::put('contactos/{id}', 'ContactoController@update');
+  Route::delete('contactos/{id}', 'ContactoController@destroy');
 
   Route::put('test-upload', function(Request $request) {
     return response()->json([

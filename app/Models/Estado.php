@@ -17,8 +17,8 @@ class Estado extends Model
         return $this->hasMany(Caso::class);
     }
 
-    public function consultas()
+    public function contactos()
     {
-        return $this->hasMany(Consulta::class);
+        return $this->hasMany(Contacto::class);
     }
 }

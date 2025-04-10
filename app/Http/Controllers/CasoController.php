@@ -36,7 +36,8 @@ class CasoController extends Controller
 
         if (!($result['success'] ?? false)) {
             return response()->json([
-                'message' => 'Captcha inválido. Por favor, inténtalo de nuevo.'
+                'message' => 'Captcha inválido. Por favor, inténtalo de nuevo.',
+                'result' => $result
             ], 422);
         }
 
