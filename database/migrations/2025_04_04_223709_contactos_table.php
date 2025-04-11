@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('contactos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_completo');
+            $table->string('correo');
             $table->string('dni', 8);
-            $table->string('telefono')->nullable();
-            $table->string('correo')->nullable();
-            $table->string('direccion')->nullable();
+            $table->string('telefono');
             $table->text('mensaje')->nullable();
             $table->foreignId('estado_id')->constrained('estados', 'id')->onDelete('restrict');
             $table->timestamps();

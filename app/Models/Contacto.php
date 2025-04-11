@@ -13,10 +13,9 @@ class Contacto extends Model
 
     protected $fillable = [
         'nombre_completo',
+        'correo',
         'dni',
         'telefono',
-        'correo',
-        'direccion',
         'mensaje',
         'estado_id',
     ];

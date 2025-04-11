@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreContactoRequest;
 use App\Models\Contacto;
 use Illuminate\Http\Request;
 
@@ -13,19 +14,8 @@ class ContactoController extends Controller
         return response()->json($casos);
     }
 
-    public function store(Request $request)
+    public function store(StoreContactoRequest $request)
     {
-        // Validación de datos
-        $request->validate([
-            'nombre_completo' => 'required|string',
-            'dni' => 'required|numeric',
-            'telefono' => 'required|numeric',
-            'correo' => 'nullable|email',
-            'direccion' => 'nullable|string',
-            'mensaje' => 'required|string',
-            'estado_id' => 'required|exists:estados,id',
-        ]);
-
         $contacto = Contacto::create([
             'nombre_completo' => $request->nombre_completo,
             'dni' => $request->dni,
@@ -33,7 +23,7 @@ class ContactoController extends Controller
             'correo' => $request->correo,
             'direccion' => $request->direccion,
             'mensaje' => $request->mensaje,
-            'estado_id' => $request->estado_id,
+            'estado_id' => $request->estado_id  ?? 1,
         ]);
 
         return response()->json([
