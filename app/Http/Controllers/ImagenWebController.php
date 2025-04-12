@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\ImagenWeb;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class ImagenWebController extends Controller
 {
@@ -15,7 +17,7 @@ class ImagenWebController extends Controller
         $result = $imagenes->mapWithKeys(function ($item) {
             return [$item->key => $item->path];
         });
-        
+
         return response()->json($result);
     }
 
@@ -44,27 +46,30 @@ class ImagenWebController extends Controller
     public function update(Request $request)
     {
         $tipos = ['logo', 'carrusel1', 'carrusel2', 'carrusel3'];
+        $response = [];
+        
+        $manager = new ImageManager(new Driver());
 
         foreach ($tipos as $tipo) {
+            
             if ($request->hasFile($tipo)) {
                 $file = $request->file($tipo);
-                $imagenExistente = ImagenWeb::where('key', $tipo)->first();
-                if ($imagenExistente && Storage::disk('public')->exists(str_replace('/storage/', '', $imagenExistente->path))) {
-                    Storage::disk('public')->delete(str_replace('/storage/', '', $imagenExistente->path));
-                }
 
-                $nombreArchivo = $tipo . '.' . $file->getClientOriginalExtension();
+                $filename = $tipo . '.png';
 
-                $ruta = $file->storeAs('web_images', $nombreArchivo, 'public');
+                $image = $manager->read($file)->toPng();
 
-                ImagenWeb::updateOrCreate(
-                    ['key' => $tipo],
-                    ['path' => '/storage/' . $ruta]
-                );
+                Storage::disk('public')->put('imagenes_web/' . $filename, (string) $image);
+
+            } else {
+                $response[] = $tipo . " no actualizado";
             }
         }
 
-        return response()->json(['message' => 'Imágenes actualizadas correctamente.']);
+        return response()->json([
+            'message' => 'Imágenes actualizadas correctamente.',
+            "response" => $response
+        ]);
     }
 
     public function destroy($id)

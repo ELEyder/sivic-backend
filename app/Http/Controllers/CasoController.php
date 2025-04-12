@@ -16,9 +16,15 @@ class CasoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $casos = Caso::with('estado', 'tipo_caso')->get();
+        $query = Caso::with('estado', 'tipo_caso');
+        
+        if ($request->has('dni')) {
+            $query->where('dni', $request->input('dni'));
+        }
+    
+        $casos = $query->get();
         return response()->json($casos);
     }
 
