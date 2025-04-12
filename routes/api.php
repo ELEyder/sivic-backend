@@ -12,6 +12,10 @@ Route::prefix('v1')->group(function () {
   Route::resource('contactos', 'ContactoController');
   Route::put('contactos/{id}', 'ContactoController@update');
   Route::delete('contactos/{id}', 'ContactoController@destroy');
+  
+  Route::resource('imagenes_web', 'ImagenWebController');
+  Route::put('imagenes_web', 'ImagenWebController@update');
+  Route::delete('imagenes_web/{id}', 'ImagenWebController@destroy');
 
   Route::put('test-upload', function(Request $request) {
     return response()->json([
