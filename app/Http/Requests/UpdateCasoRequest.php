@@ -38,7 +38,7 @@ class UpdateCasoRequest extends FormRequest
             'fecha_resolucion' => 'nullable|date',
             'asignado' => 'nullable|string',
             'resolucion' => 'nullable|string',
-            'resolucion_archivo' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'resolucion_archivo' => 'nullable|file|mimes:jpg,jpeg,png,pdf,xlsx,xls',
             'tipo_caso_id' => 'nullable|exists:tipos_caso,id',
             'estado_id' => 'exists:estados,id',
         ];
