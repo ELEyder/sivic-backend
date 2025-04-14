@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomePageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,8 @@ Route::prefix('v1')->group(function () {
   Route::put('imagenes_web', 'ImagenWebController@update');
   Route::delete('imagenes_web/{id}', 'ImagenWebController@destroy');
 
+  Route::resource('home-page', HomePageController::class);
+  
   Route::put('test-upload', function(Request $request) {
     return response()->json([
         'method' => $request->method(),

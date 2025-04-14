@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             TiposCasoSeeder::class,
             EstadosSeeder::class,
             ImagenesWebSeeder::class,
+            HomePageSeeder::class,
         ]);
     }
 }
