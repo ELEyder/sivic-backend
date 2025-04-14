@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\StatisticsPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,7 @@ Route::prefix('v1')->group(function () {
   Route::delete('imagenes_web/{id}', 'ImagenWebController@destroy');
 
   Route::resource('home-page', HomePageController::class);
+  Route::resource('statistics-page', StatisticsPageController::class);
   
   Route::put('test-upload', function(Request $request) {
     return response()->json([
