@@ -58,7 +58,7 @@ class Caso extends Model
             ->orderBy('mes')
             ->get();
 
-        $nombresMeses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        $nombresMeses = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
         $data = [];
 
         foreach ($resultados as $item) {
