@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             ImagenesWebSeeder::class,
             HomePageSeeder::class,
             StatisticsPageSeeder::class,
+            InformationPageSeeder::class,
+            CasoSeeder::class,
         ]);
     }
 }

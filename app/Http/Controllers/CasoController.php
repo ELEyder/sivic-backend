@@ -19,11 +19,11 @@ class CasoController extends Controller
     public function index(Request $request)
     {
         $query = Caso::with('estado', 'tipo_caso');
-        
+
         if ($request->has('dni')) {
             $query->where('dni', $request->input('dni'));
         }
-    
+
         $casos = $query->get();
         return response()->json($casos);
     }
@@ -135,6 +135,17 @@ class CasoController extends Controller
             'message' => 'Caso actualizado exitosamente',
             'caso' => $caso,
             'datos_eviados' => $request
+        ]);
+    }
+
+    // CasoController.php
+    public function dashboardData()
+    {
+        return response()->json([
+            'grafico_mensual' => Caso::getCasosPorMes(),
+            'estados' => Caso::getEstadisticasEstados(),
+            'total' => Caso::count(),
+            'ultima_actualizacion' => Caso::getUltimaActualizacion()
         ]);
     }
 
